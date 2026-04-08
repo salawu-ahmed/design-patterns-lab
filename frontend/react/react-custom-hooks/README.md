@@ -1,73 +1,228 @@
-# React + TypeScript + Vite
+# Custom Hook Pattern
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+The **Custom Hook Pattern** in React is used to extract and reuse stateful logic across multiple components. Instead of repeating the same logic in different places, we encapsulate that logic inside a custom hook and reuse it wherever needed.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This pattern improves:
 
-## React Compiler
+* **Code reusability**
+* **Separation of concerns**
+* **Readability and maintainability**
+* **Testability**
+* **Scalability in large applications**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This repository contains practical, real-world examples of custom hooks implemented as part of the **Design Patterns Lab**, with each example demonstrating a specific use case.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## What is a Custom Hook?
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+A **custom hook** is a JavaScript function that:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Starts with the word `use`
+2. Uses one or more React hooks (`useState`, `useEffect`, etc.)
+3. Encapsulates reusable logic
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Example:
+
+```ts
+export function useToggle(initialValue = false) {
+  const [value, setValue] = useState(initialValue);
+
+  const toggle = () => setValue(prev => !prev);
+
+  return { value, toggle };
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Why Use the Custom Hook Pattern?
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Without custom hooks:
+
+* Logic gets duplicated across components
+* Components become large and harder to maintain
+* Testing becomes more difficult
+
+With custom hooks:
+
+* Logic is reusable
+* Components stay focused on UI
+* Code becomes easier to scale
+
+---
+
+## Folder Structure
+
+```text
+src/
+├─ hooks/
+│  ├─ useToggle.ts
+│  ├─ useDebounce.ts
+│  └─ ...
+├─ components/
+│  └─ ToggleButton.tsx
+└─ examples/
+   ├─ ToggleExamplePage.tsx
+   └─ DebounceExample.tsx
 ```
+
+### Responsibilities
+
+**hooks/**
+Contains reusable logic.
+
+**components/**
+Contains UI components.
+
+**examples/**
+Contains demonstration pages showing how the hooks are used.
+
+---
+
+## Implemented Hooks
+
+### 1. useToggle
+
+Manages boolean state toggling.
+
+Common use cases:
+
+* Opening and closing modals
+* Dropdown menus
+* Show/hide password
+* Dark mode switch
+* Like/favorite buttons
+
+Example:
+
+```ts
+const { value, toggle } = useToggle();
+
+<button onClick={toggle}>
+  {value ? "ON" : "OFF"}
+</button>
+```
+
+---
+
+### 2. useDebounce
+
+Delays updating a value until the user stops typing or interacting.
+
+Common use cases:
+
+* Search inputs
+* API request optimization
+* Form validation
+* Autocomplete
+* Filtering large datasets
+
+Example:
+
+```ts
+const debouncedValue = useDebounce(search, 500);
+```
+
+---
+
+## Example Use Case: Dropdown Menu
+
+This example demonstrates how `useToggle` can control a dropdown menu.
+
+Behavior:
+
+* Clicking the button toggles visibility
+* State logic is reusable
+* UI remains simple
+
+---
+
+## Design Principles Demonstrated
+
+* Single Responsibility Principle
+* Separation of Concerns
+* Reusability
+* Composability
+* Clean Architecture
+* Scalable Component Design
+
+---
+
+## How to Run the Project
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open the browser:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Branching Strategy
+
+This project follows a structured workflow:
+
+```text
+main
+development
+feature/<pattern-name>
+```
+
+Example:
+
+```text
+feature/useToggle-dropdown
+feature/useDebounce-search
+```
+
+All feature branches are merged into `development` via Pull Requests.
+
+---
+
+## Learning Goals
+
+This project is designed to:
+
+* Practice real-world React design patterns
+* Build reusable abstractions
+* Demonstrate scalable architecture
+* Prepare for production-level development
+* Serve as a reference for other developers
+
+---
+
+## Future Hooks to Implement
+
+Planned additions:
+
+* useFetch
+* useLocalStorage
+* usePagination
+* useOnClickOutside
+* useWindowSize
+* usePrevious
+* useAsync
+* useForm
+* useModal
+* useUndo
+
+---
+
+## Author
+
+Design Patterns Lab — A practical collection of reusable React and backend patterns built to demonstrate scalable software design and engineering best practices.
